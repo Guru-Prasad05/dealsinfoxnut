@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,6 +28,7 @@ export default function EnquiryForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [customQtyUnit, setCustomQtyUnit] = useState<"gms" | "kg">("kg");
+  const customQtyRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -228,31 +229,37 @@ export default function EnquiryForm() {
                 <label className="block text-sm font-body font-semibold text-cream/80 mb-1.5">
                   Quantity (approx)
                 </label>
-                <select
-                  {...register("quantity")}
-                  className="w-full px-4 py-3 bg-white/[0.06] border border-gold/20 rounded-lg font-body text-sm text-cream focus:outline-none focus:border-gold/60 transition-colors appearance-none"
-                >
-                  <option value="" className="bg-dark-green">
-                    Select quantity
-                  </option>
-                  <option value="<10kg" className="bg-dark-green">
-                    Less than 10kg
-                  </option>
-                  <option value="10-50kg" className="bg-dark-green">
-                    10 – 50 kg
-                  </option>
-                  <option value="50kg+" className="bg-dark-green">
-                    50 kg+
-                  </option>
-                  <option value="custom" className="bg-dark-green">
-                    Custom quantity
-                  </option>
-                </select>
+                <div className="relative">
+                  <select
+                    {...register("quantity")}
+                    className="w-full px-4 py-3 pr-10 bg-white/[0.06] border border-gold/20 rounded-lg font-body text-sm text-cream focus:outline-none focus:border-gold/60 transition-colors bg-[#1E3A34]"
+                  >
+                    <option value="" className="bg-[#1E3A34] text-cream/50">
+                      Select quantity
+                    </option>
+                    <option value="<10kg" className="bg-[#1E3A34] text-cream">
+                      Less than 10 kg
+                    </option>
+                    <option value="10-50kg" className="bg-[#1E3A34] text-cream">
+                      10 – 50 kg
+                    </option>
+                    <option value="50kg+" className="bg-[#1E3A34] text-cream">
+                      50 kg+
+                    </option>
+                    <option value="custom" className="bg-[#1E3A34] text-cream">
+                      Custom quantity
+                    </option>
+                  </select>
+                  <svg className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gold/60" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
 
                 {/* Custom quantity input */}
                 {selectedQty === "custom" && (
                   <div className="mt-2 flex gap-2">
                     <input
+                      ref={customQtyRef}
                       type="number"
                       min="1"
                       placeholder="Enter amount"
@@ -271,8 +278,8 @@ export default function EnquiryForm() {
                           type="button"
                           onClick={() => {
                             setCustomQtyUnit(unit);
-                            const input = document.querySelector<HTMLInputElement>('input[type="number"]');
-                            if (input?.value) setValue("quantity", `${input.value} ${unit}`);
+                            if (customQtyRef.current?.value)
+                              setValue("quantity", `${customQtyRef.current.value} ${unit}`);
                           }}
                           className={`px-3 py-2 text-xs font-body font-semibold uppercase transition-colors ${
                             customQtyUnit === unit
