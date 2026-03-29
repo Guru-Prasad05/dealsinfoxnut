@@ -2,7 +2,15 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { Leaf, Dumbbell, WheatOff, Flame, ShieldCheck } from "lucide-react";
+import { Leaf, Dumbbell, WheatOff, Flame, ShieldCheck, CheckCircle2, Truck, Star, Package, Users } from "lucide-react";
+
+const highlights = [
+  { icon: Star,        text: "Sourced directly from the finest farms in Bihar" },
+  { icon: CheckCircle2,text: "Roasted fresh to lock in crunch, taste & nutrition" },
+  { icon: Package,     text: "Premium fresh-lock packaging for lasting crispness" },
+  { icon: Users,       text: "Trusted by corporate brands across India for gifting" },
+  { icon: Truck,       text: "Pan-India delivery — fast, reliable, bulk-ready" },
+];
 
 const badges = [
   { icon: Leaf, label: "100% Natural" },
@@ -154,10 +162,20 @@ export default function BrandStory() {
             At DealsInfoxNut, we bring you premium quality foxnuts (makhana)
             sourced from the best farms.
           </p>
-          <p className="animate-in font-body text-base md:text-lg text-cream/70 leading-relaxed mb-8">
+          <p className="animate-in font-body text-base md:text-lg text-cream/70 leading-relaxed mb-6">
             Our snacks are carefully processed to maintain natural taste,
             nutrition, and freshness.
           </p>
+
+          {/* Key Highlights */}
+          <ul className="animate-in space-y-3 mb-8">
+            {highlights.map((h) => (
+              <li key={h.text} className="flex items-start gap-3">
+                <h.icon size={18} className="text-gold mt-0.5 shrink-0" />
+                <span className="font-body text-sm text-cream/75 leading-relaxed">{h.text}</span>
+              </li>
+            ))}
+          </ul>
 
           {/* Feature Badges */}
           <div className="flex flex-wrap gap-3">
