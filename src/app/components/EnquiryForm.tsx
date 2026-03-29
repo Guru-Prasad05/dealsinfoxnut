@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Send, Loader2, CheckCircle } from "lucide-react";
@@ -27,10 +27,13 @@ export default function EnquiryForm() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  const [customQtyUnit, setCustomQtyUnit] = useState<"gms" | "kg">("kg");
+
   const {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<EnquiryFormData>({
     resolver: zodResolver(enquirySchema),
@@ -38,6 +41,8 @@ export default function EnquiryForm() {
       enquiryType: "retail",
     },
   });
+
+  const selectedQty = useWatch({ control, name: "quantity" });
 
   // Pre-fill from URL hash params (e.g., #enquiry?type=prestige)
   useEffect(() => {
@@ -239,7 +244,48 @@ export default function EnquiryForm() {
                   <option value="50kg+" className="bg-dark-green">
                     50 kg+
                   </option>
+                  <option value="custom" className="bg-dark-green">
+                    Custom quantity
+                  </option>
                 </select>
+
+                {/* Custom quantity input */}
+                {selectedQty === "custom" && (
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      type="number"
+                      min="1"
+                      placeholder="Enter amount"
+                      onChange={(e) =>
+                        setValue(
+                          "quantity",
+                          e.target.value ? `${e.target.value} ${customQtyUnit}` : "custom"
+                        )
+                      }
+                      className="flex-1 px-3 py-2.5 bg-white/[0.06] border border-gold/20 rounded-lg font-body text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-gold/60 transition-colors"
+                    />
+                    <div className="flex rounded-lg overflow-hidden border border-gold/20">
+                      {(["gms", "kg"] as const).map((unit) => (
+                        <button
+                          key={unit}
+                          type="button"
+                          onClick={() => {
+                            setCustomQtyUnit(unit);
+                            const input = document.querySelector<HTMLInputElement>('input[type="number"]');
+                            if (input?.value) setValue("quantity", `${input.value} ${unit}`);
+                          }}
+                          className={`px-3 py-2 text-xs font-body font-semibold uppercase transition-colors ${
+                            customQtyUnit === unit
+                              ? "bg-gold text-dark-green"
+                              : "bg-white/[0.04] text-cream/60 hover:bg-white/[0.08]"
+                          }`}
+                        >
+                          {unit}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
