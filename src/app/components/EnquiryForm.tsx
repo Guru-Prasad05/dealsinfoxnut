@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Send, Loader2, CheckCircle } from "lucide-react";
@@ -28,13 +28,13 @@ export default function EnquiryForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [customQtyUnit, setCustomQtyUnit] = useState<"gms" | "kg">("kg");
+  const [qtyPreset, setQtyPreset] = useState("");
   const customQtyRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
     handleSubmit,
     setValue,
-    control,
     formState: { errors, isSubmitting },
   } = useForm<EnquiryFormData>({
     resolver: zodResolver(enquirySchema),
@@ -42,8 +42,6 @@ export default function EnquiryForm() {
       enquiryType: "retail",
     },
   });
-
-  const selectedQty = useWatch({ control, name: "quantity" });
 
   // Pre-fill from URL hash params (e.g., #enquiry?type=prestige)
   useEffect(() => {
@@ -232,6 +230,13 @@ export default function EnquiryForm() {
                 <div className="relative">
                   <select
                     {...register("quantity")}
+                    value={qtyPreset}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setQtyPreset(val);
+                      if (val !== "custom") setValue("quantity", val);
+                      else setValue("quantity", "custom");
+                    }}
                     className="w-full px-4 py-3 pr-10 bg-white/[0.06] border border-gold/20 rounded-lg font-body text-sm text-cream focus:outline-none focus:border-gold/60 transition-colors bg-[#1E3A34]"
                   >
                     <option value="" className="bg-[#1E3A34] text-cream/50">
@@ -256,7 +261,7 @@ export default function EnquiryForm() {
                 </div>
 
                 {/* Custom quantity input */}
-                {selectedQty === "custom" && (
+                {qtyPreset === "custom" && (
                   <div className="mt-2 flex gap-2">
                     <input
                       ref={customQtyRef}

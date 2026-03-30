@@ -3,6 +3,11 @@
 import { useEffect, useRef } from "react";
 import { Gift, Star, Crown } from "lucide-react";
 
+function scrollToEnquiry(type?: string) {
+  if (type) window.location.hash = `enquiry?type=${type}`;
+  document.getElementById("enquiry")?.scrollIntoView({ behavior: "smooth" });
+}
+
 const corporateCombos = [
   {
     id: "elegance",
@@ -239,29 +244,31 @@ export default function CorporateGifting() {
               </div>
 
               {/* CTA */}
-              <a
-                href={`#enquiry?type=${combo.id}`}
-                className={`block text-center text-sm font-body font-semibold uppercase tracking-[0.12em] px-6 py-3 rounded-[4px] transition-all duration-200 ${
+              <button
+                type="button"
+                onClick={() => scrollToEnquiry(combo.id)}
+                className={`w-full text-center text-sm font-body font-semibold uppercase tracking-[0.12em] px-6 py-3 rounded-[4px] transition-all duration-200 cursor-pointer ${
                   combo.featured
                     ? "bg-gold text-dark-green hover:brightness-110"
                     : "border border-gold text-gold hover:bg-gold/10"
                 }`}
               >
                 Request Quote
-              </a>
+              </button>
             </div>
           ))}
         </div>
 
         {/* Bottom CTA */}
         <div className="text-center">
-          <a
-            href="#enquiry"
-            className="inline-flex items-center gap-2 text-sm font-body font-semibold uppercase tracking-[0.12em] text-gold hover:text-light-gold transition-colors duration-200"
+          <button
+            type="button"
+            onClick={() => scrollToEnquiry()}
+            className="inline-flex items-center gap-2 text-sm font-body font-semibold uppercase tracking-[0.12em] text-gold hover:text-light-gold transition-colors duration-200 cursor-pointer"
           >
             Request Custom Quote
             <span aria-hidden="true">&rarr;</span>
-          </a>
+          </button>
           <p className="font-body text-xs text-cream/40 mt-3">
             Pan-India delivery &middot; Custom branding &middot; Bulk order
             specialists
